@@ -46,8 +46,9 @@ def load_movies():
         info = row.rstrip().split("|")
         movie_id = info[0]
         title_str = info[1]
+        title_str = title_str.decode("latin-1")
         if title_str[-1] == ')':
-            title = title_str[:-6]
+            title = title_str[:-7]
         else:
             title = title_str
 
@@ -91,6 +92,10 @@ def load_ratings():
         info = row.rstrip().split("\t")
         # user_id, movie_id, score = row[:-1]
         user_id, movie_id, score, _ = info
+
+        user_id = int(user_id)
+        movie_id = int(movie_id)
+        score = int(score)
 
         rating = Rating(user_id=user_id,
                         movie_id=movie_id,
