@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+{% block content %}
+
+
+<!-- movie_id = db.Column(db.Integer, autoincrement=True, primary_key=True)
+title = db.Column(db.String(256), nullable=False)
+released_at = db.Column(db.DateTime, nullable=True)
+imdb_url -->
+
+  <h2>{{ movie.title }}</h2>
+    Release Date: {{ movie.released_at.strftime('%m-%d-%Y') }}<br>
+    <a href="{{ movie.imdb_url }}">IMDB Link</a><br>
+    <br>
+    Ratings:
+    <ul>
+        {% for r in movie.ratings | sort(attribute='score') %}
+        <li>
+            User {{ r.user.user_id }}: {{ r.score }}
+        </li>
+        {% endfor %}
+    </ul>
+
+
+{% endblock %}

@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+{% block content %}
+
+  <h2>Register</h2>
+
+  <form action='/register', method='POST' id='regForm'>
+    Email: <input type='text', id='email', name='email'><br>
+    Password: <input type='text', id='password', name='password'><br>
+    <input type='submit', id='registration', value='Register Now!'>
+  </form>
+
+  <script src="https:code.jquery.com/jquery-3.2.1.min.js"></script>
+
+  <script>
+  // front end validation for email address and password format
+  //   function checkUser(evt) {
+  //     let email = $('#email').val();
+
+
+
+  //   }
+
+  //   $('#regForm').on('submit',checkUser);
+  </script>
+
+{% endblock %}
