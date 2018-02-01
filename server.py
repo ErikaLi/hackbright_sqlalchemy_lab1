@@ -121,6 +121,23 @@ def logout_process():
     return redirect("/")
 
 
+@app.route('/rate', methods=['POST'])
+def rate_movie():
+    """Add or update rating for a movie by a certain user."""
+    movie_id = request.form['movie_id']
+    rating = request.form['rating']
+    user_id = session.get('current_user')
+    current_rating = Rating.query.filter(Rating.movie_id == movie_id,
+                                         Rating.user_id == user_id).first()
+    if current_rating:
+        # update if we already have a rating
+        current_rating.score = rating
+    else:
+        new_rating = Rating(movie_id=movie_id, user_id=user_id, score=rating)
+        db.session.add(new_rating)
+    db.session.commit()
+    flash("Your rating was added!")
+    return redirect("/movies/" + str(movie_id))
 
 
 if __name__ == "__main__":

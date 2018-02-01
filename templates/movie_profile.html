@@ -10,8 +10,24 @@ imdb_url -->
   <h2>{{ movie.title }}</h2>
     Release Date: {{ movie.released_at.strftime('%m-%d-%Y') }}<br>
     <a href="{{ movie.imdb_url }}">IMDB Link</a><br>
+    {% if session.get('current_user') %}
+        <form action = "/rate", method='POST'>
+            Rate this Movie
+            <select name = "rating">
+                <option value=1>1</option>
+                <option value=2>2</option>
+                <option value=3>3</option>
+                <option value=4>4</option>
+                <option value=5>5</option>
+            </select>
+            <input type='hidden' name="movie_id" value="{{ movie.movie_id }}">
+            <input type="submit">
+        </form>
+    {% else %}
+        <p><a href="/login">Log in to your account to rate this movie</a></p>
+    {% endif %}
     <br>
-    Ratings:
+    Current User Ratings:
     <ul>
         {% for r in movie.ratings | sort(attribute='score') %}
         <li>
