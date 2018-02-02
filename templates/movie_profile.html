@@ -10,9 +10,20 @@ imdb_url -->
   <h2>{{ movie.title }}</h2>
     Release Date: {{ movie.released_at.strftime('%m-%d-%Y') }}<br>
     <a href="{{ movie.imdb_url }}">IMDB Link</a><br>
+    Average rating for this movie: {{ avg_rating }}<br>
+    {% if current_rating %}
+        Your rating for this movie: {{ current_rating.score }}
+    {% else %}
+        We predict that your rating for this movie will be {{ prediction }}
+    {% endif %}
+    <br>
     {% if session.get('current_user') %}
         <form action = "/rate", method='POST'>
-            Rate this Movie
+            {% if current_rating %}
+                Updating your rating
+            {% else %}
+                Rate this Movie
+            {% endif %}
             <select name = "rating">
                 <option value=1>1</option>
                 <option value=2>2</option>

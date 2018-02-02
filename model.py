@@ -58,23 +58,27 @@ class User(db.Model):
         other_users = [rating.user for rating in movie.ratings]
 
         # initiate an empty list
-        comparison_users = []
+        positive_sim = []
+        negative_sim = []
 
         # loop through the list of users who have rated the movie,
         # calculate pearson similarity value
         # append a tuple of the pearson value and the user object to the comparison list
         for other_user in other_users:
-            pearson = self.similarity(other_user)
+            sim = self.similarity(other_user)
             rating = Rating.query.filter_by(movie_id=movie.movie_id,
                                             user_id=other_user.user_id).one()
-            comparison_users.append(tuple([pearson, rating.score]))
+            if sim >= 0:
+                positive_sim.append(tuple([sim, rating.score]))
+            else:
+                negative_sim.append(tuple([sim, rating.score]))
 
-        # sort comparison list
-        sorted_users = sorted(comparison_users, reverse=True)
-        top_user = sorted_users[0]
+        numerator_pos = sum([r * sim for sim, r in positive_sim])
+        numerator_neg = sum([abs(r-6) * -sim for sim, r in negative_sim])
 
-        prediction = top_user[0] * top_user[1]
-        return prediction
+        denominator = sum([abs(sim) for sim, r in positive_sim]) + sum([abs(sim) for sim, r in negative_sim])
+
+        return (numerator_pos + numerator_neg) / denominator
 
 
 # Put your Movie and Rating model classes here.

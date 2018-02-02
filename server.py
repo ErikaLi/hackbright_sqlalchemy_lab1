@@ -40,8 +40,32 @@ def movie_list():
 def display_movie(movie_id):
     """Display info for a certain movie"""
 
+    user_id = session.get('current_user')
     movie = Movie.query.get(movie_id)
-    return render_template("movie_profile.html", movie=movie)
+    all_ratings = [r.score for r in movie.ratings]
+
+    if user_id:
+        current_rating = Rating.query.filter(Rating.movie_id == movie_id,
+                                             Rating.user_id == user_id).first()
+    else:
+        current_rating = None
+
+    if len(all_ratings) > 0:
+        avg_rating = round(float(sum(all_ratings)) / len(all_ratings), 2)
+    else:
+        avg_rating = "This movie has not yet been rated"
+
+    if user_id and (not current_rating) and len(all_ratings) > 0:
+        user = User.query.get(user_id)
+        prediction = round(user.predict_rating(movie), 2)
+    else:
+        prediction = "We don't have a prediction for you."
+
+    return render_template("movie_profile.html",
+                           movie=movie,
+                           current_rating=current_rating,
+                           avg_rating=avg_rating,
+                           prediction=prediction)
 
 
 @app.route("/users")
@@ -129,8 +153,8 @@ def rate_movie():
     user_id = session.get('current_user')
     current_rating = Rating.query.filter(Rating.movie_id == movie_id,
                                          Rating.user_id == user_id).first()
+
     if current_rating:
-        # update if we already have a rating
         current_rating.score = rating
     else:
         new_rating = Rating(movie_id=movie_id, user_id=user_id, score=rating)
