@@ -57,6 +57,7 @@ class User(db.Model):
         # get a list of other users who have rated the selected movie
         other_users = [rating.user for rating in movie.ratings]
 
+        import pdb; pdb.set_trace()
         # initiate an empty list
         positive_sim = []
         negative_sim = []
@@ -68,7 +69,11 @@ class User(db.Model):
             sim = self.similarity(other_user)
             rating = Rating.query.filter_by(movie_id=movie.movie_id,
                                             user_id=other_user.user_id).one()
-            if sim >= 0:
+
+        # FIX THIS
+        # if users who rated this movie did not rate any movies that this user rated, sims will be 0,
+        # and it will throw a division by 0 error
+            if sim > 0:
                 positive_sim.append(tuple([sim, rating.score]))
             else:
                 negative_sim.append(tuple([sim, rating.score]))
